@@ -1,0 +1,7 @@
+[
+    {"name":"foo" , "age":30}, 
+    {"name":"bear" , "age":30}, 
+    {"name":"baz" , "age":20}, 
+    {"name":"koo" , "age":40} 
+
+]
