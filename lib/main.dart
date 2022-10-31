@@ -22,16 +22,33 @@ class Person {
   }
 }
 
+///this extension handel all the wait Future for any resone if
+///item in list of wait is fauild the result will empty list
+///ignoring if one or more item in list of Future wate is success
 extension EmptyOnError<E> on Future<List<Iterable<E>>> {
   Future<List<Iterable<E>>> emptyOnError() =>
       catchError((_, __) => List<Iterable<E>>.empty());
 }
 
+///this extension handel one item in  the wait Future for any resone if item in list of wait is fauild the result will empty
+///for this item .
+///the other item in list of Future waite is success and
+///give its result .
+extension EmptyOnErrorOnFuture<E> on Future<Iterable<E>> {
+  Future<Iterable<E>> emptyOnErr() =>
+      catchError((_, __) => Iterable<E>.empty());
+}
+
 void testit() async {
-  final persons = await Future.wait([getdate(people1Url), getdate(people2Url)])
-      .emptyOnError();
+  final persons = await Future.wait([
+    getdate(people1Url).emptyOnErr(),
+    getdate(people2Url).emptyOnErr(),
+  ]);
   // final persons = await getdate(people1Url);
   persons.log();
+
+  ///the resutl is
+  ///[(), (Person (foo 2 , 30), Person (bear 2 , 30), Person (baz 2 , 20), Person (koo 2 , 40))]
 }
 
 Future<Iterable<Person>> getdate(String url) => HttpClient()
@@ -41,7 +58,7 @@ Future<Iterable<Person>> getdate(String url) => HttpClient()
     .then((str) => json.decode(str) as List<dynamic>)
     .then((lst) => lst.map((e) => Person.formjson(e)));
 
-const people1Url = "http://127.0.0.1:5500/api/people1.json";
+const people1Url = "http://127.0.0.1:5500/api/people11.json";
 const people2Url = "http://127.0.0.1:5500/api/people2.json";
 
 void main() {
