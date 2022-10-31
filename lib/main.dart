@@ -22,19 +22,27 @@ class Person {
   }
 }
 
+extension EmptyOnError<E> on Future<List<Iterable<E>>> {
+  Future<List<Iterable<E>>> emptyOnError() =>
+      catchError((_, __) => List<Iterable<E>>.empty());
+}
+
 void testit() async {
-  final persons = await getdate();
+  final persons = await Future.wait([getdate(people1Url), getdate(people2Url)])
+      .emptyOnError();
+  // final persons = await getdate(people1Url);
   persons.log();
 }
 
-Future<Iterable<Person>> getdate() => HttpClient()
+Future<Iterable<Person>> getdate(String url) => HttpClient()
     .getUrl(Uri.parse(url))
     .then((req) => req.close())
     .then((resp) => resp.transform(utf8.decoder).join())
     .then((str) => json.decode(str) as List<dynamic>)
     .then((lst) => lst.map((e) => Person.formjson(e)));
 
-const url = "http://127.0.0.1:5500/api/people.json";
+const people1Url = "http://127.0.0.1:5500/api/people1.json";
+const people2Url = "http://127.0.0.1:5500/api/people2.json";
 
 void main() {
   runApp(const MyApp());
