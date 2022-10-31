@@ -88,6 +88,38 @@ Future<Iterable<Person>> getdata(String url) => HttpClient()
 const people1Url = "http://127.0.0.1:5500/api/people11.json";
 const people2Url = "http://127.0.0.1:5500/api/people2.json";
 
+mixin ListOfThingsAPI<T> {
+  Future<Iterable<T>> get(String url) => HttpClient()
+      .getUrl(Uri.parse(url))
+      .then((reqs) => reqs.close())
+      .then((resp) => resp.transform(utf8.decoder).join())
+      .then((str) => json.decode(str) as List<dynamic>)
+      .then((lst) => lst.cast());
+}
+
+class GetApiEndPoint with ListOfThingsAPI<String> {}
+
+class GetPeople with ListOfThingsAPI<Map<String, dynamic>> {
+  Future<Iterable<Person>> getPeople(String url) => get(url).then(
+        (jsons) => jsons.map(
+          (e) => Person.formjson(e),
+        ),
+      );
+}
+
+void testIt3() async {
+  final people = await GetApiEndPoint()
+      .get(
+        'http://127.0.0.1:5500/api/apis.json',
+      )
+      .then((urls) => Future.wait(
+            urls.map(
+              (url) => GetPeople().getPeople(url),
+            ),
+          ));
+  people.log();
+}
+
 void main() {
   runApp(const MyApp());
 }
@@ -98,7 +130,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    testit1();
+    testIt3();
     'this after tesit'.log();
     return MaterialApp(
       title: 'Flutter Demo',
