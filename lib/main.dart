@@ -38,6 +38,7 @@ extension EmptyOnErrorOnFuture<E> on Future<Iterable<E>> {
   Future<Iterable<E>> emptyOnErr() =>
       catchError((_, __) => Iterable<E>.empty());
 }
+
 /*
 the Future.forEach function 
 if you don,t care about of result of running the Future , 
@@ -46,6 +47,12 @@ and feed with null if success
 and return .catchError((_, __) => -1) here -1 if any error happing 
 
  */
+Stream<Iterable<Person>> getPerson() async* {
+  for (final url in Iterable.generate(
+      2, (i) => 'http://127.0.0.1:5500/api/people${i + 1}.json')) {
+    yield await getdata(url);
+  }
+}
 
 void testit() async {
   final result = await Future.forEach(
@@ -63,6 +70,12 @@ void testit() async {
 
   ///the resutl is
   ///[(), (Person (foo 2 , 30), Person (bear 2 , 30), Person (baz 2 , 20), Person (koo 2 , 40))]
+}
+
+void testit1() async {
+  await for (final person in getPerson()) {
+    person.log();
+  }
 }
 
 Future<Iterable<Person>> getdata(String url) => HttpClient()
@@ -85,7 +98,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    testit();
+    testit1();
     'this after tesit'.log();
     return MaterialApp(
       title: 'Flutter Demo',
