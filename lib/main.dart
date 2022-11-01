@@ -120,6 +120,17 @@ void testIt3() async {
   people.log();
 }
 
+void testIt4() async {
+  await for (final people in Stream.periodic(const Duration(seconds: 3))
+      .asyncExpand((_) => GetPeople()
+          .getPeople(
+            'http://127.0.0.1:5500/api/people1.json',
+          )
+          .asStream())) {
+    people.log();
+  }
+}
+
 void main() {
   runApp(const MyApp());
 }
@@ -130,7 +141,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    testIt3();
+    testIt4();
     'this after tesit'.log();
     return MaterialApp(
       title: 'Flutter Demo',
