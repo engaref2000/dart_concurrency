@@ -6,13 +6,14 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is covring this topic .
+_ future await.
+_ future wait.
+_ stream
+_ future handel Error for all action in wait .
+_ future handel Error for each action in future wait .
+_ stream asyncExpand
+\_ stream Transformation
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+A few resources to get you started if this is project:
+you can check thr https://rxmarbles.com/ website fro better understand the rx

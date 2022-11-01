@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtool show log;
 import 'dart:io';
 import 'dart:convert';
+import 'dart:math' as math;
 
 extension Log on Object {
   void log() => devtool.log(toString());
@@ -131,6 +134,44 @@ void testIt4() async {
   }
 }
 
+extension RandomElement<T> on Iterable<T> {
+  T getRandomItem() => elementAt(math.Random().nextInt(length));
+}
+
+const names = ['foo', 'bar', 'baz'];
+
+class UpperCaseSink implements EventSink<String> {
+  final EventSink<String> _sink;
+  UpperCaseSink(this._sink);
+
+  @override
+  void add(String event) => _sink.add(event.toUpperCase());
+
+  @override
+  void addError(Object error, [StackTrace? stackTrace]) =>
+      _sink.addError(error, stackTrace);
+
+  @override
+  void close() => _sink.close();
+}
+
+class StreamTransformCaseString extends StreamTransformerBase<String, String> {
+  @override
+  Stream<String> bind(
+    Stream<String> stream,
+  ) =>
+      Stream<String>.eventTransformed(stream, (sink) => UpperCaseSink(sink));
+}
+
+void testit5() async {
+  await for (final name in Stream.periodic(
+      const Duration(seconds: 3), (_) => names.getRandomItem()).transform(
+    StreamTransformCaseString(),
+  )) {
+    name.log();
+  }
+}
+
 void main() {
   runApp(const MyApp());
 }
@@ -141,8 +182,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    testIt4();
-    'this after tesit'.log();
+    testit5();
+    // 'this after tesit'.log();
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
